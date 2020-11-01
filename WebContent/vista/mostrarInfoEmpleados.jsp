@@ -43,10 +43,22 @@
 	                </tr>                
 	                </tbody>           
 	            </table>
+	            
+	            
+	            
+	    <% if(emp.size() == 0){ %>
+	       <p class="alert alert-danger" role="alert">No hay resultados.</p>
+        <%}else{%>   
+           <p class="alert alert-success" role="alert">Total de empleados: <%= emp.size() %></p>     
+        
+	      <%}%>      
 	            <form action="index.jsp" method="post">
 		           <button type="submit" value="inicio" class="btn btn-outline-dark"> atrás </button>
 	            </form>
 	      </div>
+	      
+
+	      
 	      <!-- Bootstrap Scripts -->
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>

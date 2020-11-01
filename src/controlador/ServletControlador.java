@@ -1,5 +1,12 @@
 package controlador;
 
+/**
+ * 2DAW - ejercicio nóminas
+ * 
+ * @author Isabel Orozco
+ * 
+ */
+
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
@@ -7,6 +14,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.catalina.valves.rewrite.InternalRewriteMap.UpperCase;
+
 import beans.EmpleadoBean;
 import beans.NominaBean;
 import servicios.IServicio;
@@ -50,7 +60,7 @@ public class ServletControlador extends HttpServlet {
 					//request.getRequestDispatcher("/vista/error.jsp").forward(request, response);
 					break;
 				case "3":
-					request.getRequestDispatcher("/vista/busquedaEmpleado.jsp").forward(request, response);
+					request.getRequestDispatcher("/vista/formularioBusqueda.jsp").forward(request, response);
 				    break;
 				default:
 					break;
@@ -73,25 +83,34 @@ public class ServletControlador extends HttpServlet {
 		case "Consultar":
 				consultarSalario(request, response);
 			break;
-		case "nombre":
-			request.getRequestDispatcher("/vista/error.jsp").forward(request, response);
+		case "Busqueda":
+			Busqueda(request, response);
 		break;
-		case "dni":
-			request.getRequestDispatcher("/vista/error.jsp").forward(request, response);
-		break;
-		case "sexo":
-			request.getRequestDispatcher("/vista/error.jsp").forward(request, response);
-		break;
-		case "categoria":
-			request.getRequestDispatcher("/vista/error.jsp").forward(request, response);
-		break;
-		case "anyos":
-			request.getRequestDispatcher("/vista/error.jsp").forward(request, response);
-		break;	
+		
 		default:
 			break;
 		}
 
+	}
+
+private void Busqueda(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		// TODO Auto-generated method stub
+	
+	IServicio servicio = new Servicio();
+	
+	String nombre =request.getParameter("nombre");
+	String dni =request.getParameter("dni");
+	char sexo =  request.getParameter("sexo").equals("") ? 'Z':  request.getParameter("sexo").toUpperCase().charAt(0);
+	int categoria = request.getParameter("categoria").equals("") ? -1: Integer.parseInt(request.getParameter("categoria"));
+	int anyosTrabajados = request.getParameter("anyosTrabajados").equals("") ? -1: Integer.parseInt(request.getParameter("anyosTrabajados"));
+	
+	
+	ArrayList<EmpleadoBean> empleados = servicio.lista(nombre,dni,sexo,categoria,anyosTrabajados);
+	
+	
+	request.setAttribute("empleado", empleados);
+	
+	request.getRequestDispatcher("/vista/mostrarInfoEmpleados.jsp").forward(request, response);
 	}
 
 // MÉTODOS
@@ -108,7 +127,7 @@ public class ServletControlador extends HttpServlet {
 		//empleadosBean que es lo que mandamos a la vista
 	
 		IServicio servicio = new Servicio();
-		ArrayList<EmpleadoBean> empleados = servicio.lista();
+		ArrayList<EmpleadoBean> empleados = servicio.lista("","",'Z',-1,-1);
 		
 		
 		request.setAttribute("empleado", empleados);

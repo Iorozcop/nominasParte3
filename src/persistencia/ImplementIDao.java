@@ -11,7 +11,12 @@ import java.util.ArrayList;
 import modelos.Empleado;
 import modelos.Nomina;
 
-
+/**
+ * 2DAW - ejercicio nóminas
+ * 
+ * @author Isabel Orozco
+ * 
+ */
 
 public class ImplementIDao implements iDao {
 
@@ -44,32 +49,6 @@ public class ImplementIDao implements iDao {
 			return conexion;
 		}
 		
-		/** 
-		 * Método que muestra un listado de empleados
-		 * */
-		public ArrayList<Empleado> listaEmpleados() {
-			
-			ArrayList<Empleado> empleados = new ArrayList<Empleado>();
-			
-			try {
-				Connection conexion = conectar();
-				Statement consulta = conexion.createStatement();
-				ResultSet rs = consulta.executeQuery("SELECT * FROM empleados");
-
-				while (rs.next()) {
-					
-					Empleado emp = new Empleado(rs.getString(1),rs.getString(2),rs.getString(3).charAt(0) ,rs.getInt(4), rs.getInt(5));
-					
-					empleados.add(emp);
-
-				}
-			
-				conexion.close();
-			} catch (Exception e) {
-				System.out.println(e);
-			}
-			return empleados;
-		}
 		
 		/** 
 		 * Método que muestra el salario de un empleado pasandole dni por parametro
@@ -94,6 +73,7 @@ public class ImplementIDao implements iDao {
 		
 		/** 
 		 * Método que muestra un listado de empleados
+		 * @param String dni
 		 * */
 		public ArrayList<Empleado> busquedaPorDni(String dni) {
 			
@@ -118,4 +98,87 @@ public class ImplementIDao implements iDao {
 			}
 			return empleados;
 		}
+		
+	
+		/** 
+		 * Método que busca un empleado a un listado de empleados según unos parámetros
+		 *
+		 * @param nombre
+		 * @param dni
+		 * @param sexo
+		 * @param categoria
+		 * @param anyosTrabajados
+		 * 
+		 * */
+		public ArrayList<Empleado> busqueda(String nombre, String dni, char sexo, int categoria, int anyosTrabajados){
+			
+			ArrayList<Empleado> empleados = new ArrayList<Empleado>();
+
+			try {
+				Connection conexion = conectar();
+				Statement consulta = conexion.createStatement();
+				
+				
+				String query =  construirConsulta(nombre,dni,sexo , categoria, anyosTrabajados);
+				
+				ResultSet rs = consulta.executeQuery(query);
+
+				while (rs.next()) {
+					
+					Empleado emp = new Empleado(rs.getString(1),rs.getString(2),rs.getString(3).charAt(0) ,rs.getInt(4), rs.getInt(5));
+					
+					empleados.add(emp);
+
+				}
+			
+				conexion.close();
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+			return empleados;
+		}
+		
+		/**
+		 * Método que construye una query segun los parámetros que le pasemos
+		 * 
+		 * @param nombre
+		 * @param dni
+		 * @param sexo
+		 * @param categoria
+		 * @param anyosTrabajados
+		 * @return
+		 */
+		public String construirConsulta(String nombre, String dni, char sexo, int categoria, int anyosTrabajados) {
+			
+			String consulta = "SELECT * FROM empleados WHERE  1=1 "; 
+					
+			if (!nombre.equals("")) {
+				
+				consulta += " AND nombre like '%" + nombre + "%'";
+			}	
+			if (!dni.equals("")) {
+				
+				consulta += " AND dni like '" + dni + "'";
+			}	
+			if (sexo == 'M' || sexo == 'F') {
+				
+				consulta += " AND sexo = '" + sexo + "'";
+			}	
+			if (categoria >= 0) {
+				
+				consulta += " AND categoria = '" + categoria + "'";
+			}	
+			if (anyosTrabajados >= 0) {
+				
+				consulta += " AND anyosTrabajados = '" + anyosTrabajados + "'";
+			}	
+					
+			System.out.println(consulta);		
+			
+			consulta += ";";
+			return	consulta;
+		}
+
+				
+		
 }
